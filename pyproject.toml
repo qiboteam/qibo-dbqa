@@ -4,7 +4,7 @@ version = "0.0.1"
 description = ""
 authors = ["Qiboteam"]
 readme = "README.md"
-packages = [{ include = "qibo-dbqa", from = "src" }]
+packages = [{ include = "qibo_dbqa", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
