@@ -51,7 +51,16 @@ The latter methods may output DBR durations $s_k$ which correspond to secondary 
 
 
 
+### Installation
 
+The package can be installed by source after cloning the repository:
+
+```bash
+cd qibo-dbqa
+pip install .
+```
+
+### References
 
 [1] https://arxiv.org/abs/2206.11772
 
