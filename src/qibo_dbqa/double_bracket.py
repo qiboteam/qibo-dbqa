@@ -12,6 +12,7 @@ from .utils_scheduling import (
     polynomial_step,
     simulated_annealing_step,
 )
+from .utils import off_diagonal_norm_polynomial_expansion_coef,least_squares_polynomial_expansion_coef, energy_fluctuation_polynomial_expansion_coef
 
 
 class DoubleBracketGeneratorType(Enum):

@@ -1,5 +1,10 @@
+from copy import deepcopy
+
 import hyperopt
+import numpy as np
 from qibo.backends import _check_backend
+
+from .utils_scheduling import adaptive_binary_search
 
 def gradient_numerical(
     loss_function,

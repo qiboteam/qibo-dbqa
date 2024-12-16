@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from copy import deepcopy
 from enum import Enum, auto
+from functools import reduce
+from typing import Optional
 
 import hyperopt
 import numpy as np
@@ -7,6 +10,9 @@ from qibo import *
 from qibo import gates, symbols
 from qibo.config import raise_error
 from qibo.hamiltonians import Hamiltonian, SymbolicHamiltonian
+
+from .double_bracket import DoubleBracketIteration
+from .double_bracket_evolution_oracles import EvolutionOracle, EvolutionOracleType, FrameShiftedEvolutionOracle
 
 class DoubleBracketRotationType(Enum):
     # The dbr types below need a diagonal input matrix $\hat D_k$   :
@@ -50,8 +56,8 @@ class GroupCommutatorIterationWithEvolutionOracles(DoubleBracketIteration):
     def __call__(
         self,
         step_duration: float,
-        diagonal_association: EvolutionOracle = None,
-        mode_dbr: DoubleBracketRotationType = None,
+        diagonal_association: Optional[EvolutionOracle] = None,
+        mode_dbr: Optional[DoubleBracketRotationType] = None,
     ):
         # This will run the appropriate group commutator step
         rs_circ = self.recursion_step_circuit(
@@ -79,8 +85,8 @@ class GroupCommutatorIterationWithEvolutionOracles(DoubleBracketIteration):
         self,
         step_duration: float,
         eo_1: EvolutionOracle,
-        eo_2: EvolutionOracle = None,
-        mode_dbr: DoubleBracketRotationType = None,
+        eo_2: Optional[EvolutionOracle] = None,
+        mode_dbr: Optional[DoubleBracketRotationType] = None,
     ):
         s_step = np.sqrt(step_duration)
         if eo_2 is None:

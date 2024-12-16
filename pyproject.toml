@@ -9,6 +9,7 @@ packages = [{ include = "qibo_dbqa", from = "src" }]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 qibo = "^0.2.14"
+hyperopt = "^0.2.7"
 
 [tool.poetry.group.tests]
 optional = true

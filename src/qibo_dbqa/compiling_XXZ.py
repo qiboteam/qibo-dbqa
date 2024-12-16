@@ -29,7 +29,7 @@ Example:
 
 import numpy as np
 from qibo import Circuit, gates
-
+from qibo import hamiltonians
 
 def _add_gates(circuit, list_q_i, list_q_ip1, t, delta, steps):
     """

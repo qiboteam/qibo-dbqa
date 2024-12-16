@@ -8,6 +8,8 @@ from qibo import symbols
 from qibo.backends import _check_backend
 from qibo.hamiltonians import SymbolicHamiltonian
 
+from .double_bracket_evolution_oracles import EvolutionOracle, EvolutionOracleType
+
 def generate_Z_operators(nqubits: int, backend=None):
     """Generate a dictionary containing 1) all possible products of Pauli Z operators for L = n_qubits and 2) their respective names.
     Return: Dictionary with operator names (str) as keys and operators (np.array) as values
