@@ -1,8 +1,9 @@
 import math
+from functools import partial
 from typing import Optional
 
+import hyperopt
 import numpy as np
-import optuna
 
 error = 1e-3
 
@@ -40,45 +41,47 @@ def grid_search_step(
 
 
 def hyperopt_step(
-    self,
+    dbi_object,
     step_min: float = 1e-5,
     step_max: float = 1,
-    max_evals: int = 1000,
+    max_evals: int = 100,
+    space: callable = None,
+    optimizer: callable = None,
     look_ahead: int = 1,
-    verbose: bool = False,
-    d: np.array = None,
-    optimizer: optuna.samplers.BaseSampler = None,
+    d: Optional[np.array] = None,
 ):
     """
-    Optimize iteration step using Optuna.
+    Optimize iteration step using hyperopt.
 
     Args:
         step_min: lower bound of the search grid;
         step_max: upper bound of the search grid;
-        max_evals: maximum number of trials done by the optimizer;
+        max_evals: maximum number of iterations done by the hyperoptimizer;
+        space: see hyperopt.hp possibilities;
+        optimizer: see hyperopt algorithms;
         look_ahead: number of iteration steps to compute the loss function;
-        verbose: level of verbosity;
-        d: diagonal operator for generating double-bracket iterations;
-        optimizer: Optuna sampler for the search algorithm (e.g.,
-            optuna.samplers.TPESampler()).
-            See: https://optuna.readthedocs.io/en/stable/reference/samplers/index.html
+        d: diagonal operator for generating double-bracket iterations.
 
     Returns:
-        (float): optimized best iteration step.
+        (float): optimized best iteration step (minimizing loss function).
     """
-    optuna.logging.set_verbosity(optuna.logging.WARNING)
-
-    def objective(trial):
-        step = trial.suggest_float("step", step_min, step_max)
-        return self.loss(step, d=d, look_ahead=look_ahead)
-
+    if space is None:
+        space = hyperopt.hp.uniform
     if optimizer is None:
-        optimizer = optuna.samplers.TPESampler()
+        optimizer = hyperopt.tpe
+    if d is None:
+        d = dbi_object.diagonal_h_matrix
 
-    study = optuna.create_study(direction="minimize", sampler=optimizer)
-    study.optimize(objective, n_trials=max_evals, show_progress_bar=verbose)
+    space = space("step", step_min, step_max)
 
-    return study.best_params["step"]
+    best = hyperopt.fmin(
+        fn=partial(dbi_object.loss, d=d, look_ahead=look_ahead),
+        space=space,
+        algo=optimizer.suggest,
+        max_evals=max_evals,
+        show_progressbar=False,
+    )
+    return best["step"]
 
 
 def polynomial_step(
@@ -207,3 +210,59 @@ def simulated_annealing_step(
             break
 
     return current_s
+
+
+def adaptive_binary_search(loss_func, threshold=1e-4, a=0, b=2, max_eval=10):
+    evaluated_points = {}
+    eval_count = {}
+    delta_loss = float("inf")
+
+    def eval_func_at_points(eval_points):
+        for point in eval_points:
+            if point in evaluated_points.keys():
+                val = evaluated_points[point]
+            else:
+                val = loss_func(point)
+                evaluated_points[point] = val
+        len(evaluated_points.values())
+
+    grid = (b - a) / 2
+    eval_points = [a, a + grid, b]
+    eval_func_at_points(eval_points)
+
+    while True:
+        eval_vals = list(evaluated_points.values())
+        eval_grid = list(evaluated_points.keys())
+        loss_0 = min(eval_vals)
+        ind_min_val = np.argmin(eval_vals)
+
+        if eval_grid[ind_min_val] == min(eval_grid):
+            a = a - grid
+            eval_func_at_points([a])
+        elif eval_grid[ind_min_val] == max(eval_grid):
+            b = b + grid
+            eval_func_at_points([b])
+        else:
+            break
+
+    while True:
+        eval_vals = list(evaluated_points.values())
+        eval_grid = list(evaluated_points.keys())
+        loss_0 = min(eval_vals)
+        ind_min_val = np.argmin(eval_vals)
+
+        delta_loss = min(
+            [abs(loss_0 - v) for i, v in enumerate(eval_vals) if i != ind_min_val]
+        )
+        if len(evaluated_points.values()) > max_eval:
+            exit_criterion = "max_evals"
+            break
+        if delta_loss < threshold:
+            exit_criterion = "tolerance achieved"
+            break
+
+        grid /= 2
+        eval_points = [eval_grid[ind_min_val] - grid, eval_grid[ind_min_val] + grid]
+        eval_func_at_points(eval_points)
+
+    return eval_grid[ind_min_val], loss_0, evaluated_points, exit_criterion

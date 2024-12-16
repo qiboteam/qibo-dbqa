@@ -3,10 +3,11 @@ from enum import Enum, auto
 from itertools import combinations, product
 
 import numpy as np
+
 from qibo import symbols
 from qibo.backends import _check_backend
 from qibo.hamiltonians import SymbolicHamiltonian
-
+from boostvqe.models.dbi.double_bracket_evolution_oracles import *
 
 def generate_Z_operators(nqubits: int, backend=None):
     """Generate a dictionary containing 1) all possible products of Pauli Z operators for L = n_qubits and 2) their respective names.
@@ -65,28 +66,27 @@ def str_to_symbolic(name: str):
     return tensor_op
 
 
-def cs_angle_sgn(dbi_object, d, backend=None):
+def cs_angle_sgn(dbi_object, d):
     """Calculates the sign of Cauchy-Schwarz Angle :math:`\\langle W(Z), W({\\rm canonical}) \\rangle_{\\rm HS}`."""
-    backend = _check_backend(backend)
-    d = backend.cast(d)
-    norm = backend.np.trace(
-        backend.np.matmul(
-            backend.np.conj(
+    d = dbi_object.backend.cast(d)
+    norm = np.trace(
+        np.dot(
+            np.conjugate(
                 dbi_object.commutator(dbi_object.diagonal_h_matrix, dbi_object.h.matrix)
             ).T,
             dbi_object.commutator(d, dbi_object.h.matrix),
         )
     )
-    return backend.np.real(backend.np.sign(norm))
+    return np.real(np.sign(norm))
 
 
-def decompose_into_pauli_basis(h_matrix: np.array, pauli_operators: list, backend=None):
+def decompose_into_pauli_basis(h_matrix: np.array, pauli_operators: list):
     """finds the decomposition of hamiltonian `h_matrix` into Pauli-Z operators"""
     nqubits = int(np.log2(h_matrix.shape[0]))
-    backend = _check_backend(backend)
+
     decomposition = []
     for Z_i in pauli_operators:
-        expect = backend.np.trace(h_matrix @ Z_i) / 2**nqubits
+        expect = np.trace(h_matrix @ Z_i) / 2**nqubits
         decomposition.append(expect)
     return decomposition
 
@@ -154,6 +154,7 @@ class ParameterizationTypes(Enum):
     """Uses Pauli-Z operators (magnetic field)."""
     computational = auto()
     """Uses computational basis."""
+    circuits = auto()
 
 
 def params_to_diagonal_operator(
@@ -180,11 +181,36 @@ def params_to_diagonal_operator(
         d = np.zeros((len(params), len(params)))
         for i in range(len(params)):
             d[i, i] = backend.to_numpy(params[i])
+    elif parameterization is ParameterizationTypes.circuits:
+        d = SymbolicHamiltonian( sum([b*symbols.Z(j) \
+            for j,b in zip(range(nqubits),params)]))
+        eo_d = EvolutionOracle(d,mode_evolution_oracle=EvolutionOracleType.hamiltonian_simulation,name = "D(linear)")
+        eo_d.please_use_prescribed_nmb_ts_steps = 1
+        return eo_d
+
 
     # TODO: write proper tests for normalize=True
     if normalize:  # pragma: no cover
         d = d / np.linalg.norm(d)
-    return backend.cast(d)
+    return d
+
+
+def gradient_descent_initial_d_ideas(
+    nqubits: int,
+    parameterization_order: int = 2,
+    pauli_operator_dict: dict = None,
+):
+    """Return dictionary of options for d_params to use with gradient descent strategy."""
+    param_dict = {"uniform": np.ones(nqubits)}
+    len_order = sum([math.comb(nqubits, k + 1) for k in range(parameterization_order)])
+    param_dict["uniform_order"] = np.ones(len_order)
+    param_dict["random"] = np.random.rand(nqubits)
+    param_dict["uniform_random"] = np.ones(nqubits) + np.random.rand(nqubits) - 0.5
+    param_dict["uniform_order_random"] = (
+        np.random.rand(len_order) + np.random.rand(len_order) - 0.5
+    )
+    param_dict["linear"] = np.linspace(0, 1, nqubits)
+    return param_dict
 
 
 def off_diagonal_norm_polynomial_expansion_coef(dbi_object, d, n):
@@ -211,18 +237,16 @@ def off_diagonal_norm_polynomial_expansion_coef(dbi_object, d, n):
     return coef
 
 
-def least_squares_polynomial_expansion_coef(dbi_object, d, n: int = 3, backend=None):
+def least_squares_polynomial_expansion_coef(dbi_object, d, n: int = 3):
     """Return the Taylor expansion coefficients of least square cost of `dbi_object.h` and diagonal operator `d` with respect to double bracket rotation duration `s`."""
     # generate Gamma's where $\Gamma_{k+1}=[W, \Gamma_{k}], $\Gamma_0=H
-    backend = _check_backend(backend)
     Gamma_list = dbi_object.generate_gamma_list(n + 1, d)
     exp_list = np.array([1 / math.factorial(k) for k in range(n + 1)])
     # coefficients
     coef = np.empty(n)
     for i in range(n):
-        coef[i] = backend.np.real(
-            exp_list[i]
-            * backend.np.trace(dbi_object.backend.cast(d) @ Gamma_list[i + 1])
+        coef[i] = np.real(
+            exp_list[i] * np.trace(dbi_object.backend.cast(d) @ Gamma_list[i + 1])
         )
     coef = list(reversed(coef))
     return coef
@@ -265,21 +289,3 @@ def energy_fluctuation_polynomial_expansion_coef(
     )
     coef = list(reversed(coef))
     return coef
-
-
-def copy_dbi_object(dbi_object):
-    """
-    Return a copy of the DoubleBracketIteration object.
-    This is necessary for the `select_best_dbr_generator` function as pytorch do not support deepcopy for leaf tensors.
-    """
-    from copy import copy, deepcopy  # pylint: disable=import-outside-toplevel
-
-    dbi_class = dbi_object.__class__
-    new = dbi_class.__new__(dbi_class)
-
-    # Manually copy h and h0 as they may be torch tensors
-    new.h, new.h0 = copy(dbi_object.h), copy(dbi_object.h0)
-    # Deepcopy the rest of the attributes
-    for attr in ("mode", "scheduling", "cost", "ref_state"):
-        setattr(new, attr, deepcopy(getattr(dbi_object, attr, None)))
-    return new
