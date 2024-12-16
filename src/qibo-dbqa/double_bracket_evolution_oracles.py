@@ -11,8 +11,7 @@ from qibo import Circuit, gates, symbols
 from qibo.config import raise_error
 from qibo.hamiltonians import AbstractHamiltonian, SymbolicHamiltonian
 
-# TODO: remove this global import
-from boostvqe.compiling_XXZ import nqubit_XXZ_decomposition
+from .compiling_XXZ import nqubit_XXZ_decomposition
 
 
 class EvolutionOracleType(Enum):

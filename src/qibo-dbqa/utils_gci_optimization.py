@@ -1,8 +1,3 @@
-import hyperopt
-from qibo.backends import _check_backend
-
-from boostvqe.models.dbi.double_bracket import *
-from boostvqe.models.dbi.utils import *
 
 
 def gradient_numerical(
