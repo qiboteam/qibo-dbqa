@@ -6,7 +6,6 @@ import hyperopt
 import numpy as np
 
 from qibo.hamiltonians import Hamiltonian
-from .utils import *
 from .utils_scheduling import (
     grid_search_step,
     hyperopt_step,

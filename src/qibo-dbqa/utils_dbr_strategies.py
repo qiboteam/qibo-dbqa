@@ -2,7 +2,6 @@ import hyperopt
 
 from qibo.backends import _check_backend
 
-
 def select_best_dbr_generator(
     dbi_object: DoubleBracketIteration,
     d_list: list,

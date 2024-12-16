@@ -8,7 +8,6 @@ from qibo import gates, symbols
 from qibo.config import raise_error
 from qibo.hamiltonians import Hamiltonian, SymbolicHamiltonian
 
-
 class DoubleBracketRotationType(Enum):
     # The dbr types below need a diagonal input matrix $\hat D_k$   :
 

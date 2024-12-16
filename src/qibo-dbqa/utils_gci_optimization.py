@@ -1,4 +1,5 @@
-
+import hyperopt
+from qibo.backends import _check_backend
 
 def gradient_numerical(
     loss_function,
@@ -20,9 +21,6 @@ def gradient_numerical(
     # normalize gradient
     grad = grad / max(abs(grad))
     return grad
-
-
-from boostvqe.models.dbi.utils_scheduling import adaptive_binary_search
 
 
 def choose_gd_params(
