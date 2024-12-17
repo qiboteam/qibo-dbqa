@@ -5,7 +5,7 @@ Qibo features a model implementing double-bracke quantum algorithms (DBQAs) whic
 More specifically, given an input Hamiltonian $H_0$, there are several techniques in quantum computing to compute its eigenstates.
 
 A standard way is to run variational quantum circuits. For example, Qibo already features  the `VQE` model [2] which provides the implementation of the variational quantum eigensolver framework.
-DBQAs allow to go beyond VQE in that they take a different approach to compiling the quantum circuit approximating the eigenstate.
+DBQAs allow to go beyond VQE in that they take a different approach to compiling the quantum circuit approximating the eigenstate [3].
 
 ## What is the unitary of DBQA?
 
@@ -59,6 +59,6 @@ pip install .
 
 [1] https://arxiv.org/abs/2206.11772
 
-[2] https://github.com/qiboteam/vqe-sun
+[2] https://qibo.science/qibo/stable/code-examples/advancedexamples.html#how-to-write-a-vqe
 
 [3] https://arxiv.org/abs/2408.07431
