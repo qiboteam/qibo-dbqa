@@ -158,7 +158,3 @@ def vw_xxz_compiling_phase(nqubits, steps, order = 1):
             return np.exp(1j *np.pi/4* nqubits * steps +1j *np.pi/4* (nqubits  + 1)* steps /2)
 
 
-def test_compiling_XXZ(t = 0.1, nqubits = 4, steps = 3):
-    h = hamiltonians.XXZ(nqubits=nqubits, delta=0.5)
-    return  np.linalg.norm(h.exp(t) - circuit_compiling_phase(nqubits, steps) * nqubit_XXZ_decomposition(
-            nqubits=nqubits,t=0.1,delta=0.5,steps=steps))

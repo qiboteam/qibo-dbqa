@@ -49,8 +49,8 @@ class EvolutionOracle:
 
 @dataclass
 class FrameShiftedEvolutionOracle(EvolutionOracle):
-    before_circuit: str
-    after_circuit: str
+    before_circuit: Circuit
+    after_circuit: Circuit
     base_evolution_oracle: EvolutionOracle
 
     @classmethod

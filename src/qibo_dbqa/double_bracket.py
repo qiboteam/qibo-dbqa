@@ -12,6 +12,7 @@ from .utils_scheduling import (
 )
 from qibo.quantum_info.linalg_operations import commutator, matrix_exponentiation
 
+from .utils import off_diagonal_norm_polynomial_expansion_coef, least_squares_polynomial_expansion_coef, energy_fluctuation_polynomial_expansion_coef
 
 class DoubleBracketGeneratorType(Enum):
     """Define DBF evolution."""
