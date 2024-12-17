@@ -19,16 +19,11 @@ $$H_1(s) = e^{sW} H_0 e^{- s W}$$
 ### Why are double-bracket rotations useful?
 We can show that the magnitude of the off-diagonal norms will decrease.
 For this let us set the notation that $\sigma(A)$ is the restriction to the off-diagonal of the matrix A.
-In `numpy` this can be implemented by `\sigma(A) = A-np.diag(A)`. In Qibo we implement this as
-https://github.com/qiboteam/qibo/blob/8c9c610f5f2190b243dc9120a518a7612709bdbc/src/qibo/models/dbi/double_bracket.py#L145-L147
-which is part of the basic `DoubleBracketIteration` class in the `dbi` module.
+In `numpy` this can be implemented by `\sigma(A) = A-np.diag(A)`. 
 
 With this notation we next use the Hilbert-Schmidt scalar product and norm to measure the progress of diagonalization
  $$||\sigma(H_0(s))||^2- ||\sigma (H_0 )||^2= -2s \langle W, [H,\sigma(H)\rangle+O(s^2)$$
 This equation tells us that as long as the scalar product $\langle W, [H,\sigma(H)\rangle$ is positive then after the DBR the magnitude of the off-diagonal couplings in $H_0(s)$ is less than in $H_0$.
-
-For the implementation of the DBR unitary $U_0(s) = e^{-s W_0}$ see
-https://github.com/qiboteam/qibo/blob/363a6e5e689e5b907a7602bd1cc8d9811c60ee69/src/qibo/models/dbi/double_bracket.py#L68
 
 ### How to choose $D$?
 
@@ -65,3 +60,5 @@ pip install .
 [1] https://arxiv.org/abs/2206.11772
 
 [2] https://github.com/qiboteam/vqe-sun
+
+[3] https://arxiv.org/abs/2408.07431
