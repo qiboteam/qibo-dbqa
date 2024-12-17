@@ -3,11 +3,8 @@ from enum import Enum, auto
 from typing import Optional
 
 import numpy as np
-import optuna
 from qibo.config import raise_error
-from qibo.hamiltonians import Hamiltonian
-from qibo.models.dbi.utils import *
-from qibo.models.dbi.utils_scheduling import (
+from .utils_scheduling import (
     grid_search_step,
     hyperopt_step,
     polynomial_step,
