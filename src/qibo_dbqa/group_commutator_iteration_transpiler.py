@@ -4,12 +4,10 @@ from enum import Enum, auto
 from functools import reduce
 from typing import Optional
 
-import hyperopt
 import numpy as np
 from qibo import *
-from qibo import gates, symbols
+from qibo import gates
 from qibo.config import raise_error
-from qibo.hamiltonians import Hamiltonian, SymbolicHamiltonian
 
 from .double_bracket import DoubleBracketIteration
 from .double_bracket_evolution_oracles import EvolutionOracle, EvolutionOracleType, FrameShiftedEvolutionOracle
