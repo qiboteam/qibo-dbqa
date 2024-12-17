@@ -116,8 +116,8 @@ class DoubleBracketIteration:
             np.array(np.matrix(self.backend.to_numpy(operator)).getH())
         )
 
-
         self.h.matrix = operator_dagger @ self.h.matrix @ operator
+        return operator
 
     def eval_dbr_unitary(
         self, step: float, mode: DoubleBracketGeneratorType = None, d: np.array = None
