@@ -2,19 +2,19 @@
 
 Qibo features a model implementing double-bracke quantum algorithms (DBQAs) which are helpful for approximating eigenstates based on the ability to run the evolution under the input Hamiltonian.
 
-More specifically, given a Hamiltonian $H_0$, how can we find a circuit which after applying to the reference state (usually $|0\rangle^{\otimes L}$ for $L$ qubits) will approximate an eigenstate?
+More specifically, given an input Hamiltonian $H_0$, there are several techniques in quantum computing to compute its eigenstates.
 
 A standard way is to run variational quantum circuits. For example, Qibo already features  the `VQE` model [2] which provides the implementation of the variational quantum eigensolver framework.
 DBQAs allow to go beyond VQE in that they take a different approach to compiling the quantum circuit approximating the eigenstate.
 
 ## What is the unitary of DBQA?
 
-Given $H_0$ we begin by assuming that we were given a diagonal and hermitian operator $D_0$ and a time $s_0$.
+Given $H_0$ we begin by assuming that we were given a diagonal and Hermitian operator $D_0$ and a time $s_0$.
 The `dbi` module provides numerical strategies for selecting them.
 For any such choice we define the bracket
-$$ W_0 = [D_0, H_0]$$
+$$W_0 = [D_0, H_0]$$
 and the double-bracket rotation (DBR) of the input Hamiltonian to time $s$
-$$H_0(s) = e^{sW} H e^{- s W}$$
+$$H_1(s) = e^{sW} H_0 e^{- s W}$$
 
 ### Why are double-bracket rotations useful?
 We can show that the magnitude of the off-diagonal norms will decrease.
