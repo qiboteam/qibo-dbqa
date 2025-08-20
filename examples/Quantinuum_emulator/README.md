@@ -7,4 +7,5 @@ This directory contains example notebooks and results demonstrating the use of t
 - `notebooks/`: Example Jupyter notebooks showing how to 
     - synthesize warm-start and DB-DOI circuits (see [`notebooks/vqe_db_doi_synthesis.ipynb`](notebooks/vqe_db_doi.ipynb) )
     - execute and read from Quantinuum emulators (see [`notebooks/quantinuum_vqe_db_doi.ipynb`](notebooks/quantinuum_vqe_db_doi.ipynb))
-- `results/`: Output results from the circuit generation and Quantinuum job references.
+- `results/`: Output results from the circuit generation and Quantinuum job references. With these results, user should be able to run [`notebooks/quantinuum_vqe_db_doi.ipynb`](notebooks/quantinuum_vqe_db_doi.ipynb), while skipping `2. Execute on Quantinuum`.
+
