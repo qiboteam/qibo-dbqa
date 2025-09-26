@@ -19,7 +19,7 @@ $$H_1(s) = e^{sW} H_0 e^{- s W}$$
 ### Why are double-bracket rotations useful?
 We can show that the magnitude of the off-diagonal norms will decrease.
 For this let us set the notation that $\sigma(A)$ is the restriction to the off-diagonal of the matrix A.
-In `numpy` this can be implemented by $\sigma(A)$ '= A-np.diag(A)`. 
+In `numpy` this can be implemented by $\sigma(A)$ `= A-np.diag(A)`. 
 
 With this notation we next use the Hilbert-Schmidt scalar product and norm to measure the progress of diagonalization
  $$||\sigma(H_0(s))||^2- ||\sigma (H_0 )||^2= -2s \langle W, [H,\sigma(H)]\rangle+O(s^2)$$
