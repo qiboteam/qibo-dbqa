@@ -7,8 +7,8 @@ readme = "README.md"
 packages = [{ include = "qibo_dbqa", from = "src" }]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-qibo = "^0.2.14"
+python = ">=3.12,<3.15"
+qibo = "^0.3.7"
 
 [tool.poetry.group.tests]
 optional = true
@@ -17,7 +17,7 @@ optional = true
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
 pylint = "3.1.0"
-qibojit = "^0.1.7"
+qibojit = "^0.1.18"
 
 
 [tool.poe.tasks]
