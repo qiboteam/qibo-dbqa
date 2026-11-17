@@ -14,7 +14,7 @@ qibo = "^0.3.7"
 optional = true
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^7.2.1"
+pytest = ">=7.2.1,<10.0.0"
 pytest-cov = "^4.0.0"
 pylint = "3.1.0"
 qibojit = "^0.1.18"
