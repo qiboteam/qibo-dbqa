@@ -16,7 +16,7 @@ optional = true
 [tool.poetry.group.tests.dependencies]
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
-pylint = "3.1.0"
+pylint = "4.0.9"
 qibojit = "^0.1.18"
 
 
